@@ -1,0 +1,63 @@
+name: Windows desktop installer
+on:
+  push:
+    tags: ['desktop-v*']
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  windows:
+    runs-on: windows-latest
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: desktop
+        shell: pwsh
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: desktop/package-lock.json
+      - name: Install locked dependencies
+        run: npm ci --no-audit --no-fund
+      - name: Install checksum-verified Electron runtime
+        run: npm run runtime:install
+      - name: Stage current calculator
+        run: npm run stage
+      - name: Test desktop application and native project files
+        run: npm run test:desktop
+      - name: Build Windows x64 installer
+        run: npm run build:windows
+      - name: Install and test the packaged application
+        run: |
+          $setup = Get-ChildItem dist/Connection-Design-Setup-*-x64.exe | Select-Object -First 1
+          if (-not $setup) { throw 'Installer not found' }
+          $installDir = Join-Path $env:RUNNER_TEMP 'ConnectionDesignInstalled'
+          $process = Start-Process -FilePath $setup.FullName -ArgumentList @('/S', "/D=$installDir") -Wait -PassThru
+          if ($process.ExitCode -ne 0) { throw "Installer exited $($process.ExitCode)" }
+          $exe = Join-Path $installDir 'Connection Design.exe'
+          if (-not (Test-Path $exe)) { throw 'Installed executable not found' }
+          $env:CONNECTION_DESIGN_EXE = $exe
+          npm run test:desktop
+          if ($LASTEXITCODE -ne 0) { throw 'Installed application smoke test failed' }
+          (Get-FileHash $setup.FullName -Algorithm SHA256).Hash.ToLower() + '  ' + $setup.Name | Set-Content dist/SHA256SUMS.txt
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        if: always()
+        with:
+          name: connection-design-windows
+          path: |
+            desktop/dist/Connection-Design-Setup-*-x64.exe
+            desktop/dist/SHA256SUMS.txt
+            desktop/dist/*smoke.png
+            desktop/dist/installed-windows.png
+          if-no-files-found: warn
+      - name: Publish the tested Windows installer
+        if: startsWith(github.ref, 'refs/tags/desktop-v')
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $setup = Get-ChildItem dist/Connection-Design-Setup-*-x64.exe | Select-Object -First 1
+          gh release create $env:GITHUB_REF_NAME $setup.FullName dist/SHA256SUMS.txt --title "Connection Design $($env:GITHUB_REF_NAME -replace '^desktop-v','') - Windows x64" --notes-file RELEASE-NOTES.md --verify-tag
+          if ($LASTEXITCODE -ne 0) { throw 'Release publication failed' }

@@ -1,0 +1,13 @@
+'use strict';
+const fs = require('node:fs');
+const path = require('node:path');
+const crypto = require('node:crypto');
+const root = path.resolve(__dirname, '../..');
+const html = fs.readFileSync(path.join(root, 'embedded-beam.html'), 'utf8');
+if (!html.includes('function calculateBreakout') || !html.includes('function saveProject')) throw new Error('Calculator source is incomplete.');
+const out = path.join(root, 'desktop/app');
+fs.mkdirSync(out, { recursive: true });
+fs.writeFileSync(path.join(out, 'embedded-beam.html'), html.replace('<script>', '<script src="desktop-adapter.js"></script>\n<script>'));
+fs.copyFileSync(path.join(root, 'desktop/desktop-adapter.js'), path.join(out, 'desktop-adapter.js'));
+fs.writeFileSync(path.join(out, 'source.json'), JSON.stringify({ source: 'embedded-beam.html', sha256: crypto.createHash('sha256').update(html).digest('hex') }, null, 2));
+console.log('Staged calculator without changing its calculation code.');

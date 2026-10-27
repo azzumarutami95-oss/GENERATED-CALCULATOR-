@@ -1,0 +1,80 @@
+{
+  "name": "connection-design",
+  "productName": "Connection Design",
+  "version": "1.0.0",
+  "description": "Offline steel-to-concrete embedded head plate design checks",
+  "author": "Connection Design",
+  "license": "UNLICENSED",
+  "private": true,
+  "main": "main.cjs",
+  "scripts": {
+    "stage": "node scripts/stage.cjs",
+    "start": "npm run stage && electron .",
+    "build:windows": "npm run stage && electron-builder --win nsis --x64 --publish never",
+    "runtime:install": "node node_modules/electron/install.js",
+    "test:desktop": "node scripts/smoke.cjs"
+  },
+  "devDependencies": {
+    "electron": "45.0.0",
+    "electron-builder": "26.18.0",
+    "playwright-core": "1.64.1"
+  },
+  "build": {
+    "appId": "app.connectiondesign.desktop",
+    "productName": "Connection Design",
+    "asar": true,
+    "compression": "maximum",
+    "directories": {
+      "output": "dist",
+      "buildResources": "assets"
+    },
+    "files": [
+      "main.cjs",
+      "preload.cjs",
+      "app/**/*",
+      "assets/icon.png",
+      "package.json"
+    ],
+    "artifactName": "Connection-Design-Setup-${version}-${arch}.${ext}",
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "executableName": "Connection Design",
+      "signExecutable": false
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowElevation": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Connection Design",
+      "installerLanguages": [
+        "en_US"
+      ],
+      "installerIcon": "assets/icon.ico",
+      "uninstallerIcon": "assets/icon.ico",
+      "deleteAppDataOnUninstall": false
+    },
+    "fileAssociations": [
+      {
+        "ext": "epd",
+        "name": "Connection Design Project",
+        "description": "Embedded head plate design project",
+        "role": "Editor"
+      }
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/azzumarutami95-oss/GENERATED-CALCULATOR-.git",
+    "directory": "desktop"
+  }
+}
