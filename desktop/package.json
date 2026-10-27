@@ -46,7 +46,8 @@
         }
       ],
       "executableName": "Connection Design",
-      "signExecutable": false
+      "signExecutable": false,
+      "icon": "assets/icon.ico"
     },
     "nsis": {
       "oneClick": false,
@@ -61,7 +62,8 @@
       ],
       "installerIcon": "assets/icon.ico",
       "uninstallerIcon": "assets/icon.ico",
-      "deleteAppDataOnUninstall": false
+      "deleteAppDataOnUninstall": false,
+      "script": "assets/installer.nsi"
     },
     "fileAssociations": [
       {
@@ -70,7 +72,11 @@
         "description": "Embedded head plate design project",
         "role": "Editor"
       }
-    ]
+    ],
+    "electronLanguages": [
+      "en-US"
+    ],
+    "afterPack": "scripts/after-pack.cjs"
   },
   "repository": {
     "type": "git",

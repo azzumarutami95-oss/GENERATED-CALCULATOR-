@@ -8,4 +8,4 @@ Connection Design for Windows 10/11, 64-bit.
 
 Download and run `Connection-Design-Setup-1.0.0-x64.exe`. Use `SHA256SUMS.txt` to verify the download.
 
-This first release is not digitally signed. The release workflow tests the application, runs the installer silently on Windows, and checks the installed application before publishing.
+This first release is not digitally signed. The repository-hosted installer was cross-built on Linux. Desktop runtime tests passed on Linux; installation on Windows has not been executed for this build. The included workflow can additionally install and test the application on Windows before publishing a GitHub Release when enabled.
