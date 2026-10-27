@@ -1,0 +1,19 @@
+{
+  "product": "Connection Design",
+  "version": "1.0.0",
+  "target": "Windows 10/11 x64",
+  "installer": "Connection-Design-Setup-1.0.0-x64.exe",
+  "bytes": 104205570,
+  "sha256": "3a953348ffc6b080a464341f165d7d1b42ba85193ecb925b7c22b17bee2892c1",
+  "sourceCommit": "768c332f8940d6cc7077f016377b86c35fbeaa08",
+  "calculatorSHA256": "8f1b8045c5c7653d52d3a78b365e9ea02f15d51c8c92cb9fcfa049565d085fa4",
+  "electron": "45.0.0",
+  "builder": "26.18.0",
+  "signed": false,
+  "verification": {
+    "desktopRuntime": "Linux Electron smoke passed; native project Save/Open/Save As and PDF tested",
+    "installerArchive": "NSIS LZMA integrity test passed",
+    "payload": "Windows x64 PE and staged calculator source hash verified",
+    "windowsInstallation": "Not executed"
+  }
+}
